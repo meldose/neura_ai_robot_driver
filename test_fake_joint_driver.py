@@ -67,6 +67,8 @@ class FakeJointDriverTester(Node):
 
 # created class TestFakeJointDriver
 class TestFakeJointDriver(unittest.TestCase):
+
+    # created function for setting up the class
     @classmethod
     def setUpClass(cls):
         rclpy.init()
@@ -75,11 +77,13 @@ class TestFakeJointDriver(unittest.TestCase):
         available = cls.node.client.wait_for_server(timeout_sec=10.0)
         assert available, 'Action server not available'
 
+    # created function for destroying the node
     @classmethod
     def tearDownClass(cls):
         cls.node.destroy_node()
         rclpy.shutdown()
 
+# function for spining of the node 
     def spin_for(self, duration_sec: float):
         end = time.time() + duration_sec
         while time.time() < end:
@@ -113,9 +117,9 @@ class TestFakeJointDriver(unittest.TestCase):
     def test_joint_trajectory_action(self):
         # Create and send action goal
         goal_msg = FollowJointTrajectory.Goal()
-        traj = goal_msg.trajectory
-        traj.header.stamp = self.node.get_clock().now().to_msg()
-        traj.joint_names = ['JOINT1', 'JOINT2', 'JOINT3']
+        traj = goal_msg.trajectory # setting up the trajectory
+        traj.header.stamp = self.node.get_clock().now().to_msg() # setting up the header stamp
+        traj.joint_names = ['JOINT1', 'JOINT2', 'JOINT3'] # setting the joint names
         for i in range(11):
             pt = JointTrajectoryPoint()
             pt.positions = [0.1*i, 0.2*i, 0.3*i]
@@ -123,7 +127,7 @@ class TestFakeJointDriver(unittest.TestCase):
             traj.points.append(pt)
 
         # Send goal and wait
-        send_goal_future = self.node.client.send_goal_async(goal_msg)
+        send_goal_future = self.node.client.send_goal_async(goal_msg) # send the goal future
         rclpy.spin_until_future_complete(self.node, send_goal_future)
         goal_handle = send_goal_future.result()
         self.assertTrue(goal_handle.accepted, 'Goal was not accepted')
