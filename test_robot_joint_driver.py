@@ -5,14 +5,16 @@
 #/usr/bin/env python3
 
 import rclpy #imported rclpy
-from rclpy.node import Node
-from rclpy.action import ActionClient
+from rclpy.node import Node # imported Node 
+from rclpy.action import ActionClient # imported Action client
 from control_msgs.action import FollowJointTrajectory
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from sensor_msgs.msg import JointState
-import time
-import unittest
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint # imported Jointtrajectory
+from sensor_msgs.msg import JointState # imported Jointstate
+import time # imported time module
+import unittest #imported unittest
 
+
+# created class Robtojoin DriverTester
 class RobotJointDriverTester(Node):
     def __init__(self):
         super().__init__('test_robot_joint_driver_node')
@@ -38,8 +40,12 @@ class RobotJointDriverTester(Node):
             'joint_trajectory_controller/follow_joint_trajectory'
         )
 
+# defining function for joint states
+
     def cb_joint_states(self, msg: JointState):
         self.joint_states = msg
+
+# creating class TestRobotJointDriver
 
 class TestRobotJointDriver(unittest.TestCase):
     @classmethod
@@ -54,12 +60,14 @@ class TestRobotJointDriver(unittest.TestCase):
     def tearDownClass(cls):
         cls.node.destroy_node()
         rclpy.shutdown()
+# created function for spin
 
     def spin_for(self, duration_sec: float):
         end = time.time() + duration_sec
         while time.time() < end:
             rclpy.spin_once(self.node, timeout_sec=0.1)
 
+# created function for join trajectory command
     def test_joint_trajectory_command(self):
         traj = JointTrajectory()
         # Stamp with current time
@@ -88,6 +96,7 @@ class TestRobotJointDriver(unittest.TestCase):
         for idx in range(7):
             self.assertAlmostEqual(js.position[idx], 1.57, places=2)
 
+# created function for  join trajectory action
     def test_joint_trajectory_action(self):
         goal_msg = FollowJointTrajectory.Goal()
         traj = goal_msg.trajectory
@@ -122,6 +131,7 @@ class TestRobotJointDriver(unittest.TestCase):
         for idx in range(7):
             self.assertAlmostEqual(js.position[idx], 1.57, places=2)
 
+# calling the main function            
 if __name__ == '__main__':
     rclpy.init()
     unittest.main()
