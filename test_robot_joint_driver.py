@@ -4,7 +4,7 @@
 
 #/usr/bin/env python3
 
-import rclpy
+import rclpy #imported rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from control_msgs.action import FollowJointTrajectory
